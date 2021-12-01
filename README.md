@@ -2,10 +2,14 @@
 My submissions for Computer Graphics course
 
 # HW1
-A simple teaser video with monochrome filter and music [Output](https://github.com/DanialErfanian/CG-HW/blob/master/HW1/assets/out.mp4)
+A simple teaser video with monochrome filter and music
 - PyGame
 - ffmpeg
 <br>
+
+
+https://user-images.githubusercontent.com/44050162/144194438-b4bc5e53-6be9-457f-b002-37e55d180897.mp4
+
 
 
 # HW2
