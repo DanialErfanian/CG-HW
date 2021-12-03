@@ -46,19 +46,7 @@ function createImageData(name) {
 }
 
 
-function createAnimationData(t) {
-  // if (0.0 <= t && t <= 1.0)
-  //   return [
-  //     createImageData(getPoints("image1"), getPoints("image2"), t), [],
-  //
-  //   ]
-  // else if (1.0 <= t && t <= 2) {
-  //   return createImageData(
-  //     getPoints("image2"),
-  //     getPoints("image3"),
-  //     t - 1.0
-  //   )
-  // }
+function createAnimationData() {
   return [
     createImageData("image1"),
     createImageData("image2"),

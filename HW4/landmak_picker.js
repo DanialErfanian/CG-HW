@@ -52,7 +52,7 @@ function show_image(name) {
     return result;
   }
 
-  function createImageData(_t) {
+  function createImageData() {
     const corners = [
       0.0, 0.0,
       0.0, 1.0,
