@@ -1,5 +1,28 @@
 "use strict";
 
+
+function createData(p_center) {
+  const resultP = []
+  const resultT = []
+  const p = [
+    [0.0, 0.0],
+    [0.0, 1.0],
+    [1.0, 1.0],
+    [1.0, 0.0],
+  ]
+  for (let i = 0; i < p.length; i++) {
+    resultT.push(...p[i])
+    resultT.push(...p[(i + 1) % p.length])
+    resultT.push(...p_center)
+
+    resultP.push(...p[i])
+    resultP.push(...p[(i + 1) % p.length])
+    resultP.push(0.5, 0.5)
+  }
+  return [resultP, resultT]
+}
+
+
 function main() {
   let image = new Image();
   image.src = "images/image1.jpg";  // MUST BE SAME DOMAIN!!!
@@ -22,6 +45,7 @@ function render(image) {
 
   // look up where the vertex data needs to go.
   let positionLocation = gl.getAttribLocation(program, "a_position");
+  let texcoordLocation = gl.getAttribLocation(program, "a_texCoord");
 
   // Create a buffer to put three 2d clip space points in
   let positionBuffer = gl.createBuffer();
@@ -29,19 +53,14 @@ function render(image) {
   // Bind it to ARRAY_BUFFER (think of it as ARRAY_BUFFER = positionBuffer)
   gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
   // Set a rectangle the same size as the image.
-  setRectangle(gl, 0, 0, image.width, image.height);
+
+  const data = createData([0.8, 0.5])
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(data[0]), gl.STATIC_DRAW);
 
   // provide texture coordinates for the rectangle.
   let texcoordBuffer = gl.createBuffer();
   gl.bindBuffer(gl.ARRAY_BUFFER, texcoordBuffer);
-  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([
-    0.0, 0.0,
-    1.0, 0.0,
-    0.0, 1.0,
-    0.0, 1.0,
-    1.0, 0.0,
-    1.0, 1.0,
-  ]), gl.STATIC_DRAW);
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(data[1]), gl.STATIC_DRAW);
 
   // Create a texture.
   let texture = gl.createTexture();
@@ -87,6 +106,24 @@ function render(image) {
     gl.vertexAttribPointer(
       positionLocation, size, type, normalize, stride, offset);
   }
+
+  // Turn on the texcoord attribute
+  gl.enableVertexAttribArray(texcoordLocation);
+
+  // bind the texcoord buffer.
+  gl.bindBuffer(gl.ARRAY_BUFFER, texcoordBuffer);
+
+  {
+    // Tell the texcoord attribute how to get data out of texcoordBuffer (ARRAY_BUFFER)
+    let size = 2;          // 2 components per iteration
+    let type = gl.FLOAT;   // the data is 32bit floats
+    let normalize = false; // don't normalize the data
+    let stride = 0;        // 0 = move forward size * sizeof(type) each iteration to get the next position
+    let offset = 0;        // start at the beginning of the buffer
+    gl.vertexAttribPointer(
+      texcoordLocation, size, type, normalize, stride, offset);
+  }
+
   // set the resolution
   gl.uniform2f(resolutionLocation, gl.canvas.width, gl.canvas.height);
 
@@ -94,24 +131,9 @@ function render(image) {
     // Draw the rectangle.
     let primitiveType = gl.TRIANGLES;
     let offset = 0;
-    let count = 6;
+    let count = 4 * 3;
     gl.drawArrays(primitiveType, offset, count);
   }
-}
-
-function setRectangle(gl, x, y, width, height) {
-  let x1 = x;
-  let x2 = x + width;
-  let y1 = y;
-  let y2 = y + height;
-  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([
-    x1, y1,
-    x2, y1,
-    x1, y2,
-    x1, y2,
-    x2, y1,
-    x2, y2,
-  ]), gl.STATIC_DRAW);
 }
 
 main();
