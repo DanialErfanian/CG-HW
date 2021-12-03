@@ -1,35 +1,44 @@
 "use strict";
 
-const p_center = [0.5, 0.5]
+let frame = 0;
+const landmarks = [
+  0.0, 0.0,
+  0.0, 1.0,
+  1.0, 1.0,
+  1.0, 0.0,
+  0.25, 0.25,
+  0.75, 0.25,
+  0.25, 0.75,
+  0.75, 0.75,
+]
+
+const texturePoints = [
+  0.0, 0.0,
+  0.0, 1.0,
+  1.0, 1.0,
+  1.0, 0.0,
+  0.25, 0.25,
+  0.75, 0.25,
+  0.25, 0.75,
+  0.75, 0.75,
+]
+
 
 function createData() {
   const resultP = []
-  const resultT = []
-  const P = [
-    0.0, 0.0,
-    0.0, 1.0,
-    1.0, 1.0,
-    1.0, 0.0,
-    ...p_center
-  ]
-  const T = [
-    0.0, 0.0,
-    0.0, 1.0,
-    1.0, 1.0,
-    1.0, 0.0,
-    0.5, 0.5
-  ]
+  const resultT = [];
 
-  const triangles = new Delaunator(P).triangles;
+  const triangles = new Delaunator(landmarks).triangles;
   for (let i = 0; i < triangles.length; i++) {
     let ind = triangles[i]
-    resultP.push(P[2 * ind], P[2 * ind + 1])
-    resultT.push(T[2 * ind], T[2 * ind + 1])
+    resultP.push(landmarks[2 * ind], landmarks[2 * ind + 1])
+    resultT.push(texturePoints[2 * ind], texturePoints[2 * ind + 1])
   }
-  if (p_center[0] >= 0.45 && p_center[1] >= 0.45) {
-    p_center[0] -= 0.005
-    p_center[1] -= 0.005
+  for (let i = 4; frame < 100 && 2 * i < landmarks.length; i++) {
+    landmarks[2 * i] += 0.001
+    landmarks[2 * i + 1] += 0.001
   }
+  frame += 1;
   return [resultP, resultT]
 }
 
@@ -144,7 +153,7 @@ function render(image) {
       // Draw the rectangle.
       let primitiveType = gl.TRIANGLES;
       let offset = 0;
-      let count = 4 * 3;
+      let count = data[0].length;
       gl.drawArrays(primitiveType, offset, count);
     }
   }
