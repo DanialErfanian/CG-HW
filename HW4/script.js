@@ -5,22 +5,31 @@ const p_center = [0.5, 0.5]
 function createData() {
   const resultP = []
   const resultT = []
-  const p = [
-    [0.0, 0.0],
-    [0.0, 1.0],
-    [1.0, 1.0],
-    [1.0, 0.0],
+  const P = [
+    0.0, 0.0,
+    0.0, 1.0,
+    1.0, 1.0,
+    1.0, 0.0,
+    ...p_center
   ]
-  for (let i = 0; i < p.length; i++) {
-    resultT.push(...p[i])
-    resultT.push(...p[(i + 1) % p.length])
-    resultT.push(...p_center)
+  const T = [
+    0.0, 0.0,
+    0.0, 1.0,
+    1.0, 1.0,
+    1.0, 0.0,
+    0.5, 0.5
+  ]
 
-    resultP.push(...p[i])
-    resultP.push(...p[(i + 1) % p.length])
-    resultP.push(0.5, 0.5)
+  const triangles = new Delaunator(P).triangles;
+  for (let i = 0; i < triangles.length; i++) {
+    let ind = triangles[i]
+    resultP.push(P[2 * ind], P[2 * ind + 1])
+    resultT.push(T[2 * ind], T[2 * ind + 1])
   }
-  p_center[0] += 0.005
+  if (p_center[0] >= 0.45 && p_center[1] >= 0.45) {
+    p_center[0] -= 0.005
+    p_center[1] -= 0.005
+  }
   return [resultP, resultT]
 }
 
