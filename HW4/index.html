@@ -1,8 +1,8 @@
 <canvas id="canvas"></canvas>
-
+<link rel="stylesheet" href="style.css">
 
 <!-- vertex shader -->
-<script  id="vertex-shader-3d" type="x-shader/x-vertex">
+<script id="vertex-shader-3d" type="x-shader/x-vertex">
 attribute vec4 a_position;
 attribute vec2 a_texcoord;
 
@@ -17,9 +17,11 @@ void main() {
   // Pass the texcoord to the fragment shader.
   v_texcoord = a_texcoord;
 }
+
+
 </script>
 <!-- fragment shader -->
-<script  id="fragment-shader-3d" type="x-shader/x-fragment">
+<script id="fragment-shader-3d" type="x-shader/x-fragment">
 precision mediump float;
 
 // Passed in from the vertex shader.
@@ -31,6 +33,8 @@ uniform sampler2D u_texture;
 void main() {
    gl_FragColor = texture2D(u_texture, v_texcoord);
 }
+
+
 </script><!--
 for most samples webgl-utils only provides shader compiling/linking and
 canvas resizing because why clutter the examples with code that's the same in every sample.
