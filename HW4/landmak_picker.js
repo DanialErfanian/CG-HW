@@ -1,5 +1,23 @@
 "use strict";
 
+function addPoint(name, point) {
+  const db = JSON.parse(localStorage.getItem("db")) || {}
+  if (!(name in db))
+    db[name] = []
+
+  db[name].push(point)
+
+  localStorage.setItem("db", JSON.stringify(db))
+  console.log(db)
+}
+
+function getPoints(name) {
+  const db = JSON.parse(localStorage.getItem("db")) || {}
+  if (!(name in db))
+    return []
+  return db[name];
+}
+
 
 function extractXY(e) {
   let rect = e.target.getBoundingClientRect();
@@ -15,7 +33,8 @@ function show_image(name) {
     render(image, name, createImageData);
   };
 
-  const points = []
+  const points = getPoints(name)
+  console.log("fsdf", points)
   const mouseXY = [-1, -1]
 
   function createPoints() {
@@ -78,6 +97,7 @@ function show_image(name) {
   canvas.addEventListener("click", function (e) {
     const point = extractXY(e)
     points.push(point)
+    addPoint(name, point)
   })
 }
 
