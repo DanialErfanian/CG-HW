@@ -38,7 +38,6 @@ function createAnimationData() {
     landmarks[2 * i] += 0.001
     landmarks[2 * i + 1] += 0.001
   }
-  console.log(frame)
   frame += 1;
   return [resultP, resultT]
 }

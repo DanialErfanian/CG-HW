@@ -58,6 +58,8 @@
 
     void main() {
         gl_FragColor = texture2D(u_image, v_texCoord);
+        if (v_texCoord == vec2(-1.0, -1.0))
+        gl_FragColor = vec4(1.0, 0.0, 1.0, 1);
     }
 </script><!--
 for most samples webgl-utils only provides shader compiling/linking and
@@ -69,5 +71,5 @@ for webgl-utils, m3, m4, and webgl-lessons-ui.
 <script src="https://unpkg.com/delaunator@5.0.0/delaunator.min.js"></script>
 <script src="https://webglfundamentals.org/webgl/resources/webgl-utils.js"></script>
 <script src="gl.js"></script>
-<script src="script.js"></script>
+<script src="animator.js"></script>
 <script src="landmak_picker.js"></script>
