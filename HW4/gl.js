@@ -122,5 +122,5 @@ function render(image, canvasID, dataFunction) {
     draw(gl, prog1, data[0], data[1])
     if (data.length > 2)
       draw(gl, prog2, data[2], data[3])
-  }, 20)
+  }, 1)
 }

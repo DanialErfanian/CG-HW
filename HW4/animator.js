@@ -6,10 +6,6 @@ const landmarks = [
   0.0, 1.0,
   1.0, 1.0,
   1.0, 0.0,
-  0.25, 0.25,
-  0.75, 0.25,
-  0.25, 0.75,
-  0.75, 0.75,
 ]
 
 const texturePoints = [
@@ -17,12 +13,13 @@ const texturePoints = [
   0.0, 1.0,
   1.0, 1.0,
   1.0, 0.0,
-  0.25, 0.25,
-  0.75, 0.25,
-  0.25, 0.75,
-  0.75, 0.75,
 ]
 
+const points = getPoints("image1")
+for (let i = 0; i < points.length; i++) {
+  landmarks.push(...points[i])
+  texturePoints.push(...points[i])
+}
 
 function createAnimationData() {
   const resultP = []
@@ -34,9 +31,12 @@ function createAnimationData() {
     resultP.push(landmarks[2 * ind], landmarks[2 * ind + 1])
     resultT.push(texturePoints[2 * ind], texturePoints[2 * ind + 1])
   }
-  for (let i = 4; frame < 100 && 2 * i < landmarks.length; i++) {
-    landmarks[2 * i] += 0.001
-    landmarks[2 * i + 1] += 0.001
+  for (let i = 4; 2 * i < landmarks.length; i++) {
+    let sgn = +1;
+    if (frame % 80 >= 40)
+      sgn = -1;
+    landmarks[2 * i] += sgn * 0.002
+    landmarks[2 * i + 1] += sgn * 0.002
   }
   frame += 1;
   return [resultP, resultT]
