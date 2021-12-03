@@ -24,14 +24,31 @@
 <script id="vertex-shader-2d" type="x-shader/x-vertex">
     attribute vec2 a_position;
     attribute vec2 a_texCoord;
+    attribute vec2 a_position1;
+    attribute vec2 a_texCoord1;
+    attribute vec2 a_position2;
+    attribute vec2 a_texCoord2;
+    attribute vec2 a_position3;
+    attribute vec2 a_texCoord3;
 
     uniform vec2 u_resolution;
+    uniform float t_in;
 
     varying vec2 v_texCoord;
+    varying vec2 v_texCoord1;
+    varying vec2 v_texCoord2;
+    varying vec2 v_texCoord3;
+    varying float t;
 
     void main() {
         // convert the rectangle from pixels to 0.0 to 1.0
+        t = t_in;
         vec2 zeroToOne = a_position;/// u_resolution;
+        if (0.0 <= t && t <= 1.0) {
+            zeroToOne = (1.0-t) * a_position1 + t * a_position2;
+        } else if (1.0 <= t && t <= 2.0) {
+            zeroToOne = (2.0-t) * a_position2 + (t - 1.0) * a_position3;
+        }
 
         // convert from 0->1 to 0->2
         vec2 zeroToTwo = zeroToOne * 2.0;
@@ -43,7 +60,11 @@
 
         // pass the texCoord to the fragment shader
         // The GPU will interpolate this value between points.
+        t = t_in;
         v_texCoord = a_texCoord;
+        v_texCoord1 = a_texCoord1;
+        v_texCoord2 = a_texCoord2;
+        v_texCoord3 = a_texCoord3;
     }
 </script>
 <!-- fragment shader -->
@@ -52,14 +73,31 @@
 
     // our texture
     uniform sampler2D u_image;
+    uniform sampler2D u_image1;
+    uniform sampler2D u_image2;
+    uniform sampler2D u_image3;
 
     // the texCoords passed in from the vertex shader.
     varying vec2 v_texCoord;
+    varying vec2 v_texCoord1;
+    varying vec2 v_texCoord2;
+    varying vec2 v_texCoord3;
+    varying float t;
 
     void main() {
-        gl_FragColor = texture2D(u_image, v_texCoord);
-        if (v_texCoord == vec2(-1.0, -1.0))
-        gl_FragColor = vec4(1.0, 0.0, 1.0, 1);
+        if (v_texCoord == vec2(-1.0, -1.0)) {
+            gl_FragColor = vec4(1.0, 0.0, 1.0, 1);
+        } else if (0.0 <= t && t <= 1.0) {
+            vec4 color1 = texture2D(u_image1, v_texCoord1);
+            vec4 color2 = texture2D(u_image2, v_texCoord2);
+            gl_FragColor = color2 * t + color1 * (1.0 - t);
+        } else if (1.0 <= t && t <= 2.0) {
+            vec4 color2 = texture2D(u_image2, v_texCoord2);
+            vec4 color3 = texture2D(u_image3, v_texCoord3);
+            gl_FragColor = (2.0-t) * color2 + (t - 1.0) * color3;
+        } else if(t <= 0.0) {
+            gl_FragColor = texture2D(u_image, v_texCoord);
+        }
     }
 </script><!--
 for most samples webgl-utils only provides shader compiling/linking and

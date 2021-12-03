@@ -12,7 +12,7 @@ function show_image(name) {
   let image = new Image();
   image.src = `images/${name}.jpg`;  // MUST BE SAME DOMAIN!!!
   image.onload = function () {
-    render(image, name, createImageData);
+    render(image, name, createImageData, false);
   };
 
   const points = getPoints(name)
@@ -52,7 +52,7 @@ function show_image(name) {
     return result;
   }
 
-  function createImageData() {
+  function createImageData(_t) {
     const corners = [
       0.0, 0.0,
       0.0, 1.0,
