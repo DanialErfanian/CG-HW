@@ -5,19 +5,12 @@ import org.lwjgl.glfw.GLFWCursorPosCallback
 import org.lwjgl.glfw.GLFWErrorCallback
 import org.lwjgl.glfw.GLFWKeyCallback
 import org.lwjgl.opengl.GL
-import org.lwjgl.opengl.GL11
-import org.lwjgl.opengl.GL33.*
-import org.lwjgl.stb.STBImageWrite
 import org.lwjgl.system.MemoryUtil.NULL
-import java.nio.ByteBuffer
-import java.nio.ByteOrder
 
 
 class GLContext private constructor(private val window: Long, val viewPort: ViewPort) {
     companion object {
-        const val imageQuality = 75  // 0~100
-
-        private val WINDOW_SIZE = Pair(1080, 720)
+        private val DEFAULT_WINDOW_SIZE = ViewPort(1080, 720)
 
         private var initialized = false
 
@@ -51,7 +44,7 @@ class GLContext private constructor(private val window: Long, val viewPort: View
             }
         }
 
-        fun createWindow(title: String): GLContext {
+        fun createWindow(title: String, windowSize: ViewPort = DEFAULT_WINDOW_SIZE): GLContext {
             init()
 
             // Configure our window
@@ -60,7 +53,7 @@ class GLContext private constructor(private val window: Long, val viewPort: View
             glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE)
 
             // Create the window
-            val window = glfwCreateWindow(WINDOW_SIZE.first, WINDOW_SIZE.second, title, NULL, NULL)
+            val window = glfwCreateWindow(windowSize.iWidth, windowSize.iHeight, title, NULL, NULL)
             if (window == NULL) {
                 throw RuntimeException("Failed to create the GLFW window")
             }
@@ -71,10 +64,10 @@ class GLContext private constructor(private val window: Long, val viewPort: View
             // Center our window
             glfwSetWindowPos(
                 window,
-                (vidMode!!.width() - WINDOW_SIZE.first) / 2,
-                (vidMode.height() - WINDOW_SIZE.second) / 2
+                (vidMode!!.width() - windowSize.iWidth) / 2,
+                (vidMode.height() - windowSize.iHeight) / 2
             )
-            val context = GLContext(window, ViewPort(WINDOW_SIZE.first.toFloat(), WINDOW_SIZE.second.toFloat()))
+            val context = GLContext(window, windowSize)
             context.setKeyCallback(defaultKeyCallback)
             return context
         }
@@ -86,9 +79,15 @@ class GLContext private constructor(private val window: Long, val viewPort: View
     }
 
     private var keyCallback: GLFWKeyCallback? = null
+    private var cursorPosCallback: GLFWCursorPosCallback? = null
 
     fun setKeyCallback(keyCallback: GLFWKeyCallback) {
         this.keyCallback = glfwSetKeyCallback(window, keyCallback)
+    }
+
+    fun setCursorPosCallback(cursorPosCallback: GLFWCursorPosCallback) {
+        glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED)
+        this.cursorPosCallback = glfwSetCursorPosCallback(window, cursorPosCallback)
     }
 
     fun use() {
@@ -119,7 +118,12 @@ class GLContext private constructor(private val window: Long, val viewPort: View
     fun free() {
         glfwDestroyWindow(window)
         keyCallback?.free()
+        cursorPosCallback?.free()
     }
 }
 
-data class ViewPort(val width: Float, val height: Float)
+class ViewPort(val width: Float, val height: Float) {
+    constructor(width: Int, height: Int) : this(width.toFloat(), height.toFloat())
+    val iWidth = width.toInt()
+    val iHeight = height.toInt()
+}

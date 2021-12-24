@@ -3,7 +3,7 @@ package mutils
 class Matrix(rows: List<List<Double>>) {
 
     companion object {
-        fun identity(size: Int): Matrix {
+        fun eye(size: Int): Matrix {
             val zeroRow = (0 until size).map { 0.0 }
             val finalList = zeroRow.indices.map {
                 val currRow = zeroRow.toMutableList()
