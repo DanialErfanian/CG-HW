@@ -30,8 +30,8 @@ HW3
 
 Splines:
 
-*   [N-dimentional bezier](https://danialerfanian.github.io/CG-HW/HW3/Part1/)
-*   [N-dimentional B-Spline](https://danialerfanian.github.io/CG-HW/HW3/Part2/)
+*  N-dimentional bezier: [Live demo](https://danialerfanian.github.io/CG-HW/HW3/Part1/)
+*  N-dimentional B-Spline: [Live demo](https://danialerfanian.github.io/CG-HW/HW3/Part2/)
 
 
 | Part1: N-dimentional bezier draw | Part2: N-dimentional B-Spline draw |
